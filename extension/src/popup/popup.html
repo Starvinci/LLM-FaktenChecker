@@ -1,16 +1,23 @@
-<!-- popup.html -->
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LLM-FaktenChecker Popup</title>
     <link rel="stylesheet" href="popup.css" />
-  </head>
-  <body>
+</head>
+<body>
     <div id="popup">
-      <h1>FaktenChecker</h1>
-      <p>Hier könnte deine Extension-Funktionalität angezeigt werden.</p>
-      <button id="checkButton">Check Facts</button>
+        <h1>FaktenChecker v.0.0.1</h1>
+        <button id="checkButton1">Bereich prüfen</button>
+        <div class="option">
+            <label for="videoToggle">Automatisch Videos prüfen</label>
+            <div class="toggle">
+                <input type="checkbox" id="videoToggle">
+                <span class="slider"></span>
+            </div>
+        </div>
     </div>
     <script src="popup.js"></script>
-  </body>
+</body>
 </html>
