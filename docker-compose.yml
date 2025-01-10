@@ -1,0 +1,26 @@
+version: '3.8'  # Stelle sicher, dass die Version aktuell ist
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5003:5000"  # Host-Port auf 5003 geändert
+    environment:
+      - FLASK_ENV=development
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - frontend
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"  # Host-Port auf 8080 geändert
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./frontend:/app

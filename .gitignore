@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.env
+
+# Node.js
+node_modules/
+build/
+
+# MacOS
+.DS_Store
+
+# Docker
+*.log
+*.pid
+
+# IDEs
+.vscode/
+.idea/
