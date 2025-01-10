@@ -1,12 +1,11 @@
-# utils.py
 import requests
 
-def fetch_data_from_api(url):
+def fetch_data_from_api(url, params=None):
     """
-    Ein einfaches Beispiel zum Abfragen externer APIs.
+    Abrufen externer APIs mit Fehlerbehandlung.
     """
     try:
-        response = requests.get(url)
+        response = requests.get(url, params=params, timeout=10)
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:

@@ -1,6 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('popup.js geladen');
+
     const checkButton = document.getElementById('checkButton1');
     const videoToggle = document.getElementById('videoToggle');
+
+    // Sicherstellen, dass die Elemente existieren
+    if (!checkButton) {
+        console.error('Button "checkButton1" wurde nicht gefunden!');
+        return;
+    }
+    if (!videoToggle) {
+        console.error('Checkbox "videoToggle" wurde nicht gefunden!');
+        return;
+    }
 
     // Laden des Slider-Zustands
     const savedToggleState = localStorage.getItem('videoToggle');
@@ -11,72 +23,51 @@ document.addEventListener('DOMContentLoaded', () => {
     // Speichern des Slider-Zustands
     videoToggle.addEventListener('change', () => {
         localStorage.setItem('videoToggle', videoToggle.checked);
+        console.log('Slider-Zustand gespeichert:', videoToggle.checked);
     });
 
-    // Bereichsprüfung starten
     checkButton.addEventListener('click', () => {
-        console.log('Button geklickt! Versuche Rechteckmarkierung zu starten...');
+        console.log('Button "Bereich prüfen" wurde geklickt');
+
+        // Aktive Tabs abrufen
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            if (tabs[0]?.id) {
-                chrome.scripting.executeScript(
-                    {
-                        target: { tabId: tabs[0].id },
-                        func: startSelection, // Funktion, die auf der Seite ausgeführt wird
-                    },
-                    () => {
-                        console.log('Rechteckmarkierung gestartet!');
-                    }
-                );
-            } else {
-                console.error('Keine aktive Tab-ID gefunden!');
+            if (tabs.length === 0 || !tabs[0].id) {
+                console.error('Kein aktiver Tab gefunden.');
+                return;
             }
+
+            const activeTab = tabs[0];
+            console.log('Aktiver Tab:', activeTab);
+
+            // Sicherstellen, dass die URL kein geschützter Bereich ist
+            if (activeTab.url.startsWith('chrome://') || activeTab.url.startsWith('https://chrome.google.com/')) {
+                console.error('Content-Script kann nicht in geschützten Seiten geladen werden:', activeTab.url);
+                return;
+            }
+
+            // Content-Script injizieren
+            chrome.scripting.executeScript(
+                {
+                    target: { tabId: activeTab.id },
+                    files: ['src/contentScript.js']
+                },
+                (results) => {
+                    if (chrome.runtime.lastError) {
+                        console.error('Fehler bei executeScript:', chrome.runtime.lastError.message);
+                    } else {
+                        console.log('Content-Script erfolgreich injiziert:', results);
+                    }
+                }
+            );
         });
     });
-});
 
-// Rechteckmarkierungsfunktion
-function startSelection() {
-    console.log('Rechteckmarkierung auf der Seite gestartet!');
-    document.body.style.cursor = 'crosshair';
-
-    let startX, startY, selectionDiv;
-
-    const mouseDownHandler = (e) => {
-        startX = e.pageX;
-        startY = e.pageY;
-
-        selectionDiv = document.createElement('div');
-        selectionDiv.style.position = 'absolute';
-        selectionDiv.style.border = '2px dashed #d94e4e';
-        selectionDiv.style.background = 'rgba(217, 78, 78, 0.2)';
-        selectionDiv.style.zIndex = '9999';
-        document.body.appendChild(selectionDiv);
-    };
-
-    const mouseMoveHandler = (e) => {
-        if (!selectionDiv) return;
-        const width = Math.abs(e.pageX - startX);
-        const height = Math.abs(e.pageY - startY);
-        selectionDiv.style.left = `${Math.min(startX, e.pageX)}px`;
-        selectionDiv.style.top = `${Math.min(startY, e.pageY)}px`;
-        selectionDiv.style.width = `${width}px`;
-        selectionDiv.style.height = `${height}px`;
-    };
-
-    const mouseUpHandler = () => {
-        if (selectionDiv) {
-            console.log('Rechteck wurde markiert!');
-            document.body.removeChild(selectionDiv);
-            selectionDiv = null;
+    // Content-Script direkt für die aktuelle Seite ausführen
+    chrome.tabs.executeScript(null, { file: 'src/contentScript.js' }, () => {
+        if (chrome.runtime.lastError) {
+            console.error('Fehler beim Ausführen des Content-Scripts:', chrome.runtime.lastError.message);
+        } else {
+            console.log('Content-Script direkt ausgeführt.');
         }
-        document.body.style.cursor = 'default';
-
-        document.removeEventListener('mousedown', mouseDownHandler);
-        document.removeEventListener('mousemove', mouseMoveHandler);
-        document.removeEventListener('mouseup', mouseUpHandler);
-    };
-
-    document.addEventListener('mousedown', mouseDownHandler);
-    document.addEventListener('mousemove', mouseMoveHandler);
-    document.addEventListener('mouseup', mouseUpHandler);
-}
+    });
+});
