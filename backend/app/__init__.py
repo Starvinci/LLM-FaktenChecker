@@ -1,4 +1,3 @@
-#muss noch Aus der INit.py raus 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -16,7 +15,7 @@ def create_app():
 
     # Erweiterungen
     db.init_app(app)
-    CORS(app, resources={r"/api/*": {"origins": "*"}})  # Aktiviert CORS für alle Routen unter /api
+    CORS(app)  # Aktiviert CORS für alle Routen
 
     # Routen registrieren
     app.register_blueprint(api, url_prefix='/api')

@@ -1,5 +1,6 @@
-Flask
-Flask-SQLAlchemy==2.5.1
-SQLAlchemy<2.0  # Flask-SQLAlchemy 2.x benötigt SQLAlchemy < 2.0
-Flask-Migrate
+Flask>=2.3.0
+Flask-SQLAlchemy>=3.0.0
+SQLAlchemy>=2.0
+Flask-Migrate>=4.0
 Flask-Cors
+python-dotenv

@@ -53,15 +53,15 @@
 
         const placeholderString = "Angela Merkel ist ein Mann";
 
-        fetch('http://localhost:5003/bereich', {
+        fetch('http://localhost:5003/api/bereich', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: placeholderString }),
+            body: JSON.stringify({ message: placeholderString })
         })
             .then((response) => response.json())
             .then((data) => console.log('Antwort vom Backend:', data))
             .catch((error) => console.error('Fehler beim Senden an das Backend:', error));
-
+        
         document.body.style.pointerEvents = 'auto';
         style.remove();
 
