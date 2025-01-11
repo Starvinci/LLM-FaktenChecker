@@ -265,9 +265,9 @@
                 const statusLabel = document.createElement('span');
                 statusLabel.textContent = data.data.Einschätzung;
                 statusLabel.classList.add('status-label');
-                statusLabel.style.color = color;
+                //black
+                statusLabel.style.color = "black"; 
                 leftContainer.appendChild(statusLabel);
-
                 const actionsButtons = document.createElement('div');
                 actionsButtons.classList.add('actions-buttons');
 
@@ -383,6 +383,7 @@
         console.log('Auswahlmodus aktiv. Ziehen Sie ein Rechteck.');
     };
 
+    // Füge Event-Listener hinzu, um den Auswahlmodus zu starten
     document.addEventListener('mousedown', mouseDownHandler);
     document.addEventListener('mousemove', mouseMoveHandler);
     document.addEventListener('mouseup', mouseUpHandler);
