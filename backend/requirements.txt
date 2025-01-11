@@ -4,3 +4,7 @@ SQLAlchemy>=2.0
 Flask-Migrate>=4.0
 Flask-Cors
 python-dotenv
+langchain
+openai
+langchain_openai
+langchain_community

@@ -1,6 +1,11 @@
+# backend/app/routes.py
+
 from flask import Blueprint, request, jsonify
+from .faktencheck import Faktencheck
+import json
 
 api = Blueprint('api', __name__)
+faktencheck = Faktencheck()
 
 @api.route('/', methods=['GET'])
 def index():
@@ -12,7 +17,18 @@ def bereich():
     if not data or 'message' not in data:
         return jsonify({"error": "Invalid input, 'message' key is required"}), 400
 
-    received_message = data['message']
-    print(f"Received message: {received_message}")
+    statement = data['message']
+    print(f"Received statement for check: {statement}")
 
-    return jsonify({"status": "success", "received_message": received_message})
+    # Faktencheck durchführen
+    result = faktencheck.check(statement)
+
+    # Überprüfen, ob das Ergebnis bereits ein Dictionary ist
+    if isinstance(result, str):
+        # Falls die check-Methode eine JSON-Zeichenkette zurückgibt
+        try:
+            result = json.loads(result)
+        except json.JSONDecodeError:
+            return jsonify({"status": "error", "message": "Ungültiges JSON-Format in der Antwort."}), 500
+
+    return jsonify(result)
