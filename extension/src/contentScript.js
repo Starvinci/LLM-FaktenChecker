@@ -7,14 +7,24 @@
 
     console.log('Content-Script geladen: JavaScript der Seite wird pausiert.');
 
+    // Deaktivieren der Zeiger-Ereignisse
     document.body.style.pointerEvents = 'none';
 
-    const style = document.createElement('style');
-    style.type = 'text/css';
-    style.innerHTML = `
+    // Separater Style-Block für den benutzerdefinierten Cursor
+    const cursorStyle = document.createElement('style');
+    cursorStyle.id = 'unique-selection-tool-cursor-style';
+    cursorStyle.type = 'text/css';
+    cursorStyle.innerHTML = `
         html, body, * {
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="32" width="32" viewBox="0 0 24 24"><circle cx="9" cy="9" r="8" stroke="black" stroke-width="2" fill="none"/><line x1="14" y1="14" x2="22" y2="22" stroke="black" stroke-width="2"/></svg>'), auto !important;
         }
+    `;
+    document.head.appendChild(cursorStyle);
+
+    // Separater Style-Block für UI-Elemente
+    const uiStyle = document.createElement('style');
+    uiStyle.type = 'text/css';
+    uiStyle.innerHTML = `
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
@@ -33,22 +43,26 @@
         }
         .info-container {
             position: absolute;
-            top: calc(100% + 10px);
-            left: 0;
             background: #fff;
             border: 1px solid #ccc;
             padding: 10px;
             z-index: 10000;
-            width: 100%; /* Breite anpassen */
+            max-width: 300px; /* Maximale Breite festlegen */
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             display: flex;
             flex-direction: column;
             gap: 10px;
+            border-radius: 8px; /* Ecken abrunden */
         }
         .info-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+        .left-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         .dropdown-content {
             display: none;
@@ -62,6 +76,16 @@
         .dropdown button {
             padding: 5px 10px;
             cursor: pointer;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .dropdown button:hover {
+            background-color: #ddd;
+        }
+        .dropdown button:active {
+            background-color: #ccc;
         }
         .close-btn {
             cursor: pointer;
@@ -69,8 +93,46 @@
             border: none;
             font-size: 16px;
         }
+        /* Neue Styles für horizontale Anordnung der Buttons */
+        .actions-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .status-label {
+            font-weight: bold;
+        }
+        .actions-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .actions-buttons button {
+            padding: 5px 10px;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .actions-buttons button:hover {
+            background-color: #ddd;
+        }
+        .actions-buttons button:active {
+            background-color: #ccc;
+        }
+        /* Styles für den angezeigten Inhalt */
+        .content-display {
+            margin-top: 10px;
+        }
+        /* Styles für Links mit Abständen */
+        .content-display a {
+            display: block;
+            margin-bottom: 5px;
+            color: blue;
+            text-decoration: underline;
+        }
     `;
-    document.head.appendChild(style);
+    document.head.appendChild(uiStyle);
 
     let startX, startY, selectionDiv;
 
@@ -108,8 +170,15 @@
     const mouseUpHandler = () => {
         if (!selectionDiv) return;
 
-        // Change the mouse icon back to default
-        document.body.style.cursor = 'default';
+        // Reset des Mauszeigers
+        // Entfernen des Cursor-Style-Blocks
+        if (cursorStyle.parentElement) {
+            cursorStyle.parentElement.removeChild(cursorStyle);
+        }
+
+        // Aktivieren der Zeiger-Ereignisse wieder
+        document.body.style.pointerEvents = 'auto';
+
         console.log('Maus losgelassen');
 
         const spinner = document.createElement('div');
@@ -178,18 +247,58 @@
                 } else {
                     selectionDiv.style.background = 'rgba(255, 255, 0, 0.2)';
                 }
+
+                // Erstellen und Befüllen des Info-Containers nach Erhalt der Serverantwort
                 const infoContainer = document.createElement('div');
                 infoContainer.classList.add('info-container');
-                infoContainer.style.width = `${selectionDiv.offsetWidth}px`;
+                infoContainer.style.width = `${rect.width}px`;
+                infoContainer.style.left = `${rect.left + window.scrollX}px`;
+                infoContainer.style.top = `${rect.bottom + window.scrollY + 5}px`; // Minimaler Abstand von 5px
 
                 const infoHeader = document.createElement('div');
                 infoHeader.classList.add('info-header');
 
+                // Container für Statuslabel und Aktionen
+                const leftContainer = document.createElement('div');
+                leftContainer.classList.add('left-container');
+
                 const statusLabel = document.createElement('span');
                 statusLabel.textContent = data.data.Einschätzung;
-                statusLabel.style.fontWeight = 'bold';
+                statusLabel.classList.add('status-label');
                 statusLabel.style.color = color;
-                infoHeader.appendChild(statusLabel);
+                leftContainer.appendChild(statusLabel);
+
+                const actionsButtons = document.createElement('div');
+                actionsButtons.classList.add('actions-buttons');
+
+                // Erklärung Button
+                const explanationButton = document.createElement('button');
+                explanationButton.textContent = 'Erklärung';
+                explanationButton.onclick = () => {
+                    if (explanationContent.style.display === 'block') {
+                        explanationContent.style.display = 'none';
+                    } else {
+                        explanationContent.style.display = 'block';
+                        // Keine Änderung an linksContent
+                    }
+                };
+                actionsButtons.appendChild(explanationButton);
+
+                // Links Button
+                const linksButton = document.createElement('button');
+                linksButton.textContent = 'Links';
+                linksButton.onclick = () => {
+                    if (linksContent.style.display === 'block') {
+                        linksContent.style.display = 'none';
+                    } else {
+                        linksContent.style.display = 'block';
+                        // Keine Änderung an explanationContent
+                    }
+                };
+                actionsButtons.appendChild(linksButton);
+
+                leftContainer.appendChild(actionsButtons);
+                infoHeader.appendChild(leftContainer);
 
                 const closeBtn = document.createElement('button');
                 closeBtn.classList.add('close-btn');
@@ -198,9 +307,11 @@
                     if (selectionDiv.parentElement) {
                         selectionDiv.parentElement.removeChild(selectionDiv);
                     }
-                    document.body.style.pointerEvents = 'auto';
-                    if (style.parentElement) {
-                        style.parentElement.removeChild(style);
+                    if (infoContainer.parentElement) {
+                        infoContainer.parentElement.removeChild(infoContainer);
+                    }
+                    if (uiStyle.parentElement) {
+                        uiStyle.parentElement.removeChild(uiStyle);
                     }
                     document.removeEventListener('mousedown', mouseDownHandler);
                     document.removeEventListener('mousemove', mouseMoveHandler);
@@ -211,54 +322,35 @@
                 infoHeader.appendChild(closeBtn);
                 infoContainer.appendChild(infoHeader);
 
-                const explanationDropdown = document.createElement('div');
-                explanationDropdown.classList.add('dropdown');
-
-                const explanationButton = document.createElement('button');
-                explanationButton.textContent = 'Erklärung';
-                explanationButton.onclick = () => {
-                    explanationDropdown.classList.toggle('active');
-                };
-                explanationDropdown.appendChild(explanationButton);
-
+                // Erklärung Inhalt
                 const explanationContent = document.createElement('div');
-                explanationContent.classList.add('dropdown-content');
+                explanationContent.classList.add('content-display');
+                explanationContent.style.display = 'none';
                 explanationContent.textContent = data.data.Erklärung;
-                explanationDropdown.appendChild(explanationContent);
+                infoContainer.appendChild(explanationContent);
 
-                infoContainer.appendChild(explanationDropdown);
-
-                const linksDropdown = document.createElement('div');
-                linksDropdown.classList.add('dropdown');
-
-                const linksButton = document.createElement('button');
-                linksButton.textContent = 'Links';
-                linksButton.onclick = () => {
-                    linksDropdown.classList.toggle('active');
-                };
-                linksDropdown.appendChild(linksButton);
-
+                // Links Inhalt
                 const linksContent = document.createElement('div');
-                linksContent.classList.add('dropdown-content');
+                linksContent.classList.add('content-display');
+                linksContent.style.display = 'none';
                 if (Array.isArray(data.data.Links)) {
                     data.data.Links.forEach((link) => {
                         const a = document.createElement('a');
                         a.href = link;
                         a.textContent = link;
                         a.target = '_blank';
-                        a.style.wordBreak = 'break-all';
+                        // Hinzufügen von Abständen zwischen den Links
+                        a.style.marginBottom = '5px';
+                        a.style.color = 'blue';
+                        a.style.textDecoration = 'underline';
                         linksContent.appendChild(a);
                     });
                 } else {
                     linksContent.textContent = 'Keine Links verfügbar.';
                 }
-                linksDropdown.appendChild(linksContent);
+                infoContainer.appendChild(linksContent);
 
-                infoContainer.appendChild(linksDropdown);
-
-                selectionDiv.appendChild(infoContainer);
-
-                document.body.style.pointerEvents = 'auto';
+                document.body.appendChild(infoContainer);
             })
             .catch((error) => {
                 console.error('Fehler beim Senden an das Backend:', error);
@@ -274,9 +366,16 @@
                 errorMsg.style.left = '0';
                 selectionDiv.appendChild(errorMsg);
 
+                // Entfernen des Cursor-Style-Blocks bei Fehler
+                if (cursorStyle.parentElement) {
+                    cursorStyle.parentElement.removeChild(cursorStyle);
+                }
+
+                // Aktivieren der Zeiger-Ereignisse wieder
                 document.body.style.pointerEvents = 'auto';
             });
 
+        // Entfernen der Event-Listener nach dem Maus loslassen
         document.removeEventListener('mousedown', mouseDownHandler);
         document.removeEventListener('mousemove', mouseMoveHandler);
         document.removeEventListener('mouseup', mouseUpHandler);
