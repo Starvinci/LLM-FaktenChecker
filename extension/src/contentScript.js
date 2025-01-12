@@ -10,13 +10,13 @@
     // Deaktivieren der Zeiger-Ereignisse
     document.body.style.pointerEvents = 'none';
 
-    // Separater Style-Block für den benutzerdefinierten Cursor
+    // Separater Style-Block für den benutzerdefinierten, größeren Cursor
     const cursorStyle = document.createElement('style');
     cursorStyle.id = 'unique-selection-tool-cursor-style';
     cursorStyle.type = 'text/css';
     cursorStyle.innerHTML = `
         html, body, * {
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="32" width="32" viewBox="0 0 24 24"><circle cx="9" cy="9" r="8" stroke="black" stroke-width="2" fill="none"/><line x1="14" y1="14" x2="22" y2="22" stroke="black" stroke-width="2"/></svg>'), auto !important;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><line x1="16" y1="0" x2="16" y2="32" stroke="black" stroke-width="2"/><line x1="0" y1="16" x2="32" y2="16" stroke="black" stroke-width="2"/></svg>') 16 16, crosshair !important;
         }
     `;
     document.head.appendChild(cursorStyle);
@@ -24,22 +24,14 @@
     // Separater Style-Block für UI-Elemente
     const uiStyle = document.createElement('style');
     uiStyle.type = 'text/css';
+    uiStyle.id = 'unique-selection-tool-ui-style'; // Für spätere Referenz
     uiStyle.innerHTML = `
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        .spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: #000;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
+        /* Stil für die rote Lupe */
+        .magnifier {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 0 24 24"><circle cx="10" cy="10" r="7" stroke="red" stroke-width="2" fill="none"/><line x1="15" y1="15" x2="22" y2="22" stroke="red" stroke-width="2"/></svg>') no-repeat center center;
+            background-size: contain;
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            /* Die Animation wird dynamisch per JavaScript hinzugefügt */
         }
         .info-container {
             position: absolute;
@@ -47,7 +39,6 @@
             border: 1px solid #ccc;
             padding: 10px;
             z-index: 10000;
-            max-width: 300px; /* Maximale Breite festlegen */
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             display: flex;
             flex-direction: column;
@@ -80,6 +71,7 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             transition: background-color 0.3s;
+            color: black; /* Button Texte in schwarz */
         }
         .dropdown button:hover {
             background-color: #ddd;
@@ -91,7 +83,12 @@
             cursor: pointer;
             background: none;
             border: none;
-            font-size: 16px;
+            font-size: 24px; /* Vergrößertes Kreuz */
+            line-height: 1; /* Optimale Vertikale Ausrichtung */
+            padding: 0;
+            margin: 0;
+            font-weight: bold; /* Optional: Fett für bessere Sichtbarkeit */
+            color: black; /* Kreuz in schwarz */
         }
         /* Neue Styles für horizontale Anordnung der Buttons */
         .actions-container {
@@ -113,6 +110,7 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             transition: background-color 0.3s;
+            color: black; /* Button Texte in schwarz */
         }
         .actions-buttons button:hover {
             background-color: #ddd;
@@ -123,6 +121,7 @@
         /* Styles für den angezeigten Inhalt */
         .content-display {
             margin-top: 10px;
+            color: black; /* Erklärung in schwarz */
         }
         /* Styles für Links mit Abständen */
         .content-display a {
@@ -138,6 +137,9 @@
 
     const mouseDownHandler = (e) => {
         console.log('Maus heruntergedrückt');
+
+        document.body.style.userSelect = 'none';
+
         startX = e.pageX;
         startY = e.pageY;
 
@@ -172,6 +174,7 @@
 
         // Reset des Mauszeigers
         // Entfernen des Cursor-Style-Blocks
+        document.body.style.userSelect = 'auto';
         if (cursorStyle.parentElement) {
             cursorStyle.parentElement.removeChild(cursorStyle);
         }
@@ -181,19 +184,60 @@
 
         console.log('Maus losgelassen');
 
-        const spinner = document.createElement('div');
-        spinner.classList.add('spinner');
-        selectionDiv.appendChild(spinner);
+        // Neue rote Lupe hinzufügen
+        const magnifier = document.createElement('div');
+        magnifier.classList.add('magnifier');
+        selectionDiv.appendChild(magnifier);
 
         const rect = selectionDiv.getBoundingClientRect();
+
+        // Berechnung der Diagonalen des Rechtecks
+        const diagonal = Math.sqrt(rect.width ** 2 + rect.height ** 2);
+        // Anpassung der Größe der Lupe proportional zur Diagonale
+        const magnifierSize = Math.min(48, diagonal / 10); // Beispiel: maximale Größe 48px, anpassbar
+        magnifier.style.width = `${magnifierSize}px`;
+        magnifier.style.height = `${magnifierSize}px`;
+
+        // Dynamische Erstellung einer Kreuz-Animation basierend auf Rechteckgröße
+        const animationName = `cross-animation-${Date.now()}`; // Eindeutiger Name
+        const animationDuration = 4; // Dauer in Sekunden, anpassbar
+
+        // Definiere das Kreuz-Muster
+        const keyframes = `
+            @keyframes ${animationName} {
+                0% { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+                12.5% { top: 35%; left: 65%; transform: translate(-50%, -50%); }
+                25% { top: 50%; left: 75%; transform: translate(-50%, -50%); }
+                37.5% { top: 65%; left: 65%; transform: translate(-50%, -50%); }
+                50% { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+                62.5% { top: 65%; left: 35%; transform: translate(-50%, -50%); }
+                75% { top: 50%; left: 25%; transform: translate(-50%, -50%); }
+                87.5% { top: 35%; left: 35%; transform: translate(-50%, -50%); }
+                100% { top: 50%; left: 50%; transform: translate(-50%, -50%); }
+            }
+        `;
+
+        // Hinzufügen der dynamischen Keyframes zum UI-Style
+        const dynamicKeyframesStyle = document.createElement('style');
+        dynamicKeyframesStyle.type = 'text/css';
+        dynamicKeyframesStyle.innerHTML = keyframes;
+        document.head.appendChild(dynamicKeyframesStyle);
+
+        // Anwenden der Animation auf die Lupe
+        magnifier.style.animation = `${animationName} ${animationDuration}s linear infinite`;
+
+        // Extrahieren des Textes innerhalb des Rechtecks
         const elements = document.elementsFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
         const texts = new Set();
 
         elements.forEach((el) => {
-            if (rect.left <= el.getBoundingClientRect().right &&
-                rect.right >= el.getBoundingClientRect().left &&
-                rect.top <= el.getBoundingClientRect().bottom &&
-                rect.bottom >= el.getBoundingClientRect().top) {
+            const elRect = el.getBoundingClientRect();
+            if (
+                rect.left <= elRect.right &&
+                rect.right >= elRect.left &&
+                rect.top <= elRect.bottom &&
+                rect.bottom >= elRect.top
+            ) {
                 const text = el.innerText || el.textContent;
                 if (text.trim()) {
                     texts.add(text.trim());
@@ -224,17 +268,28 @@
                     throw new Error("Ungültige Antwort vom Backend: 'Einschätzung' fehlt.");
                 }
 
-                if (selectionDiv.contains(spinner)) {
-                    selectionDiv.removeChild(spinner);
+                if (selectionDiv.contains(magnifier)) {
+                    selectionDiv.removeChild(magnifier);
+                }
+
+                // Entfernen der dynamischen Keyframes
+                if (dynamicKeyframesStyle.parentElement) {
+                    dynamicKeyframesStyle.parentElement.removeChild(dynamicKeyframesStyle);
                 }
 
                 let color;
                 switch (data.data.Einschätzung.toLowerCase()) {
-                    case 'wahr':
+                    case 'belegbar':
                         color = 'green';
                         break;
-                    case 'falsch':
+                    case 'faktisch falsch':
                         color = 'red';
+                        break;
+                    case 'übertrieben':
+                        color = 'orange';
+                        break;
+                    case 'unvollständig':
+                        color = 'orange';
                         break;
                     default:
                         color = 'yellow';
@@ -242,6 +297,8 @@
                 selectionDiv.style.border = `2px solid ${color}`;
                 if (color === 'green') {
                     selectionDiv.style.background = 'rgba(0, 128, 0, 0.2)';
+                } else if (color === 'unvollständig' || color === 'übertrieben') {
+                    selectionDiv.style.background = 'rgba(255, 85, 0, 0.2)';
                 } else if (color === 'red') {
                     selectionDiv.style.background = 'rgba(255, 0, 0, 0.2)';
                 } else {
@@ -251,7 +308,7 @@
                 // Erstellen und Befüllen des Info-Containers nach Erhalt der Serverantwort
                 const infoContainer = document.createElement('div');
                 infoContainer.classList.add('info-container');
-                infoContainer.style.width = `${rect.width}px`;
+                infoContainer.style.width = `${rect.width}px`; // Gleiche Breite wie das Auswahlrechteck
                 infoContainer.style.left = `${rect.left + window.scrollX}px`;
                 infoContainer.style.top = `${rect.bottom + window.scrollY + 5}px`; // Minimaler Abstand von 5px
 
@@ -273,7 +330,7 @@
 
                 // Erklärung Button
                 const explanationButton = document.createElement('button');
-                explanationButton.textContent = 'Erklärung';
+                explanationButton.textContent = 'Begründung';
                 explanationButton.onclick = () => {
                     if (explanationContent.style.display === 'block') {
                         explanationContent.style.display = 'none';
@@ -286,7 +343,7 @@
 
                 // Links Button
                 const linksButton = document.createElement('button');
-                linksButton.textContent = 'Links';
+                linksButton.textContent = 'Quellen';
                 linksButton.onclick = () => {
                     if (linksContent.style.display === 'block') {
                         linksContent.style.display = 'none';
@@ -303,6 +360,7 @@
                 const closeBtn = document.createElement('button');
                 closeBtn.classList.add('close-btn');
                 closeBtn.innerHTML = '&times;';
+                closeBtn.style.color = 'black';
                 closeBtn.onclick = () => {
                     if (selectionDiv.parentElement) {
                         selectionDiv.parentElement.removeChild(selectionDiv);
@@ -351,11 +409,19 @@
                 infoContainer.appendChild(linksContent);
 
                 document.body.appendChild(infoContainer);
+
+                // Entfernen der Flagge nach erfolgreichem Abschluss
+                delete window.uniqueSelectionToolLoaded;
             })
             .catch((error) => {
                 console.error('Fehler beim Senden an das Backend:', error);
-                if (selectionDiv && selectionDiv.contains(spinner)) {
-                    selectionDiv.removeChild(spinner);
+                if (selectionDiv && selectionDiv.contains(magnifier)) {
+                    selectionDiv.removeChild(magnifier);
+                }
+
+                // Entfernen der dynamischen Keyframes
+                if (dynamicKeyframesStyle.parentElement) {
+                    dynamicKeyframesStyle.parentElement.removeChild(dynamicKeyframesStyle);
                 }
 
                 const errorMsg = document.createElement('div');
@@ -373,6 +439,12 @@
 
                 // Aktivieren der Zeiger-Ereignisse wieder
                 document.body.style.pointerEvents = 'auto';
+
+                // Entferne die Lupe und setze `user-select` zurück
+                document.body.style.userSelect = 'auto';
+
+                // Entfernen der Flagge im Fehlerfall
+                delete window.uniqueSelectionToolLoaded;
             });
 
         // Entfernen der Event-Listener nach dem Maus loslassen

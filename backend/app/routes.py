@@ -19,7 +19,6 @@ def bereich():
 
     statement = data['message']
     print(f"Received statement for check: {statement}")
-
     # Faktencheck durchführen
     result = faktencheck.check(statement)
 
@@ -32,3 +31,7 @@ def bereich():
             return jsonify({"status": "error", "message": "Ungültiges JSON-Format in der Antwort."}), 500
 
     return jsonify(result)
+@api.route('/videoCheck', methods=['POST'])
+def checkTitel():
+    return jsonify({"message": "Hello from the LLM-FaktenChecker Backend!"})
+    
