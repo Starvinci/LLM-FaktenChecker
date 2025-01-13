@@ -21,7 +21,7 @@ class Faktencheck:
     def __init__(self):
         # Initialisiere das LLM
         self.llm = ChatOpenAI(
-            model_name="gpt-4o",  # Überprüfen Sie den Modellnamen. Korrigiert von "gpt-4o" zu "gpt-4"
+            model_name="gpt-4o-mini",  # Überprüfen Sie den Modellnamen. Korrigiert von "gpt-4o" zu "gpt-4"
             temperature=0,
             openai_api_key=os.getenv("OPENAI_API_KEY")
         )

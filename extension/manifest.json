@@ -1,33 +1,46 @@
 {
     "name": "LLM-FaktenChecker Extension",
-    "version": "1.0",
-    "description": "Extension zur Überprüfung von Fakten.",
+    "version": "2.0",
+    "description": "Extension zur Überprüfung von Fakten und Verwaltung von Abonnements.",
     "manifest_version": 3,
     "icons": {
-      "16": "icons/icon16.png",
-      "32": "icons/icon32.png",
-      "48": "icons/icon48.png",
-      "128": "icons/icon128.png"
+        "16": "icons/icon.png",
+        "32": "icons/icon.png",
+        "48": "icons/icon.png",
+        "128": "icons/icon.png"
     },
     "permissions": [
-      "activeTab",
-      "storage",
-      "scripting"
+        "activeTab",
+        "storage",
+        "scripting"
     ],
     "host_permissions": [
-      "<all_urls>",
-      "*://*/*"
+        "<all_urls>"
     ],
     "action": {
-      "default_popup": "src/popup/popup.html",
-      "default_icon": {
-        "16": "icons/icon16.png",
-        "32": "icons/icon32.png",
-        "48": "icons/icon48.png"
-      }
+        "default_popup": "src/popup/popup.html",
+        "default_icon": {
+            "16": "icons/icon16.png",
+            "32": "icons/icon32.png",
+            "48": "icons/icon48.png"
+        }
     },
+    "web_accessible_resources": [
+        {
+            "resources": ["icons/image.png"],
+            "matches": ["<all_urls>"]
+        },
+        {
+            "resources": ["src/popup/settings.html", "src/popup/settings.js", "src/popup/settings.css"],
+            "matches": ["<all_urls>"]
+        },
+        {
+            "resources": ["subscription/subscription.html", "subscription/subscription.js", "subscription/subscription.css"],
+            "matches": ["<all_urls>"]
+        }
+    ],
     "background": {
-      "service_worker": "src/background.js"
+        "service_worker": "src/background.js"
     }
   }
   

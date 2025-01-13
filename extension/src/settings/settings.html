@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Einstellungen - FaktenChecker</title>
+    <link rel="stylesheet" href="settings.css">
+    <!-- Font Awesome für Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="settings-container">
+        <h2>Suchbereich</h2>
+
+        <!-- Länderauswahl -->
+        <div class="section">
+            <div class="flags-grid" id="flags-grid">
+                <!-- Beispiel-Flaggen, fügen Sie weitere hinzu -->
+                <div class="flag" data-country="DE">
+                    <img src="flags/de.png" alt="Deutschland" title="Deutschland">
+                </div>
+                <div class="flag" data-country="US">
+                    <img src="flags/us.png" alt="USA" title="USA">
+                </div>
+                <div class="flag" data-country="FR">
+                    <img src="flags/fr.png" alt="Frankreich" title="Frankreich">
+                </div>
+                <div class="flag" data-country="GB">
+                    <img src="flags/gb.png" alt="Vereinigtes Königreich" title="Vereinigtes Königreich">
+                </div>
+                <div class="flag" data-country="IT">
+                    <img src="flags/it.png" alt="Italien" title="Italien">
+                </div>
+                <div class="flag" data-country="ES">
+                    <img src="flags/es.png" alt="Spanien" title="Spanien">
+                </div>
+                <div class="flag" data-country="PL">
+                    <img src="flags/pl.png" alt="Polen" title="Polen">
+                </div>
+                <div class="flag" data-country="NL">
+                    <img src="flags/nl.png" alt="Niederlande" title="Niederlande">
+                </div>
+                <div class="flag" data-country="GR">
+                    <img src="flags/gr.png" alt="Griechenland" title="Griechenland">
+                </div>
+                <div class="flag" data-country="SL">
+                    <img src="flags/sl.png" alt="Slowenien" title="Slowenien">
+                </div>
+                <!-- Weitere Flaggen hier hinzufügen -->
+            </div>
+            <div class="worldwide-selection">
+                <div class="world-icon" id="world-icon">
+                    <img src="flags/globe.png" alt="Weltweit" title="Weltweit">
+                </div>
+            </div>
+        </div>
+
+        <!-- Priorisierte Quellen -->
+        <div class="section">
+            <h3>Zu priorisierende Quellen</h3>
+            <div id="prioritized-sources-list">
+                <div class="source-item">
+                    <input type="url" name="prioritized_sources[]" placeholder="https://example.com" required>
+                    <div class="source-buttons">
+                        <button type="button" class="remove-source-btn">
+                            <i class="fas fa-minus-circle"></i>
+                        </button>
+                        <button type="button" class="add-source-btn">
+                            <i class="fas fa-plus-circle"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vernachlässigende Quellen -->
+        <div class="section">
+            <h3>Zu vernachlässigende Quellen</h3>
+            <div id="neglected-sources-list">
+                <div class="source-item">
+                    <input type="url" name="neglected_sources[]" placeholder="https://example.com" required>
+                    <div class="source-buttons">
+                        <button type="button" class="remove-source-btn">
+                            <i class="fas fa-minus-circle"></i>
+                        </button>
+                        <button type="button" class="add-source-btn">
+                            <i class="fas fa-plus-circle"></i>
+                        </button>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Speichern und Schließen -->
+        <div class="actions">
+            <button id="save-settings" class="btn save-btn">
+                <i class="fas fa-save"></i>
+            </button>
+            <button id="close-settings" class="btn close-btn">
+                <i class="fas fa-times-circle"></i>
+            </button>
+        </div>
+    </div>
+
+    <script src="settings.js"></script>
+</body>
+</html>

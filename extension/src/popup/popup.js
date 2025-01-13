@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const checkButton = document.getElementById('checkButton1');
     const videoToggle = document.getElementById('videoToggle');
+    const settingsIcon = document.getElementById('settings-icon'); // Zahnrad-Symbol
+    const settingsIcon1 = document.getElementById('settings-icon1'); // Zahnrad-Symbol
 
     // Sicherstellen, dass die Elemente existieren
     if (!checkButton) {
@@ -13,6 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (!videoToggle) {
         console.error('Checkbox "videoToggle" wurde nicht gefunden!');
+        return;
+    }
+    if (!settingsIcon) {
+        console.error('Settings-Icon wurde nicht gefunden!');
         return;
     }
 
@@ -39,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 chrome.scripting.executeScript(
                     {
                         target: { tabId: tabs[0].id },
-                        files: ['src/videoMonitor.js'],
+                        files: ['src/videoMonitor.js'], // Pfad angepasst
                     },
                     () => {
                         if (chrome.runtime.lastError) {
@@ -65,11 +71,39 @@ document.addEventListener('DOMContentLoaded', () => {
                         alert(`Fehler beim Senden der Nachricht: ${chrome.runtime.lastError.message}`);
                     } else {
                         console.log('Video-Faktencheck deaktiviert');
-                        //alert('Video-Faktencheck deaktiviert');
+                        alert('Video-Faktencheck deaktiviert');
                     }
                 });
             });
         }
+    });
+
+    // Handler für das Zahnrad-Symbol
+    settingsIcon.addEventListener('click', () => {
+        console.log('Abo-Symbol geklickt');
+
+        // Öffnen der Einstellungsseite in einem neuen Tab
+        chrome.tabs.create({ url: chrome.runtime.getURL('src/subscription/subscription.html') }, (tab) => {
+            if (chrome.runtime.lastError) {
+                console.error('Fehler beim Öffnen des ABo-Tabs:', chrome.runtime.lastError.message);
+                alert(`Fehler beim Öffnen des ABo-Tabs: ${chrome.runtime.lastError.message}`);
+            } else {
+                console.log('Abo-Tab geöffnet:', tab);
+            }
+        });
+    });  // Handler für das Zahnrad-Symbol
+    settingsIcon1.addEventListener('click', () => {
+        console.log('Einstellungen-Symbol geklickt');
+
+        // Öffnen der Einstellungsseite in einem neuen Tab
+        chrome.tabs.create({ url: chrome.runtime.getURL('src/settings/settings.html') }, (tab) => {
+            if (chrome.runtime.lastError) {
+                console.error('Fehler beim Öffnen des Einstellungs-Tabs:', chrome.runtime.lastError.message);
+                alert(`Fehler beim Öffnen des Einstellungs-Tabs: ${chrome.runtime.lastError.message}`);
+            } else {
+                console.log('Einstellungs-Tab geöffnet:', tab);
+            }
+        });
     });
 
     checkButton.addEventListener('click', () => {

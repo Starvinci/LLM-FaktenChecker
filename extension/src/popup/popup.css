@@ -1,35 +1,33 @@
-/* popup.css */
-
+/* popup.css */ 
 /* Grundlegendes Styling für das gesamte Popup */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #ffe4e1; /* Hintergrundfarbe passend zur Popup-Farbe */
+    background: none;
+    background-color: transparent !important; /* Sicherstellen, dass der Hintergrund unsichtbar ist */
     margin: 0;
     padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    color: #333;
-    overflow: hidden; /* Verhindert Scrolling im Popup */
+    overflow: hidden; /* Entfernt Scrollen */
 }
 
 #popup {
     background-color: #ffe4e1;
-    border-radius: 10px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    padding: 20px;
+    padding: 24px; /* Abstand innen */
     text-align: center;
-    max-width: 400px; /* Maximale Breite für Flexibilität */
+    max-width: 480px; /* Maximale Breite */
     width: auto; /* Automatische Breite */
-    height: auto; /* Höhe wird flexibel angepasst */
+    height: auto; /* Automatische Höhe */
+    border: 3px solid red; /* Rote Umrandung */
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4); /* Schatteneffekt */
 }
 
+
 h1 {
-    font-size: 24px;
+    font-size: 28.8px; /* 24px * 1.2 = 28.8px */
     font-weight: bold;
     color: #d94e4e;
-    margin-bottom: 20px;
+    margin-bottom: 24px; /* 20px * 1.2 = 24px */
 }
 
 /* Styling für Buttons */
@@ -37,20 +35,20 @@ button {
     background-color: #d94e4e;
     color: #fff;
     border: none;
-    border-radius: 10px;
-    padding: 12px 0;
-    font-size: 16px;
+    border-radius: 12px; /* 10px * 1.2 = 12px */
+    padding: 14.4px 0; /* 12px * 1.2 = 14.4px */
+    font-size: 19.2px; /* 16px * 1.2 = 19.2px */
     font-weight: bold;
     cursor: pointer;
-    margin: 10px auto;
-    width: 90%;
+    margin: 12px auto; /* 10px * 1.2 = 12px */
+    width: 90%; /* 90% * 1.2 = 108% */
     display: block;
     transition: background-color 0.3s, transform 0.2s;
 }
 
 button:hover {
     background-color: #bf3e3e;
-    transform: translateY(-2px);
+    transform: translateY(-2.4px); /* -2px * 1.2 = -2.4px */
 }
 
 button:active {
@@ -63,25 +61,74 @@ button:active {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    margin-top: 20px;
-    border-top: 1px solid #ccc;
-    padding-top: 10px;
+    margin-top: 24px; /* 20px * 1.2 = 24px */
+    border-top: 1.2px solid #ccc; /* 1px * 1.2 = 1.2px */
+    padding-top: 12px; /* 10px * 1.2 = 12px */
 }
 
 .option label {
-    font-size: 13px; /* Etwas kleinerer Text */
+    font-size: 15.6px; /* 13px * 1.2 = 15.6px */
     color: #d94e4e;
-    margin-right: 10px;
+    margin-right: 12px; /* 10px * 1.2 = 12px */
+}
+#settings-icon1 {
+    position: absolute;
+    top: 7px; /* 3px * 1.2 = 3.6px */
+    right: 7px; /* 3px * 1.2 = 3.6px */
+    cursor: pointer;
 }
 
-.option .toggle {
+#settings-icon1 img {
+    width: 22.8px; /* 19px * 1.2 = 22.8px */
+    height: 22.8px; /* 19px * 1.2 = 22.8px */
+    color: rgb(219, 214, 214);
+    transition: transform 0.3s, opacity 0.3s;
+}
+
+#settings-icon1:hover img {
+    transform: rotate(90deg); /* Optional: Dreh-Animation beim Hover */
+    opacity: 0.8; /* Optional: Transparenz beim Hover */
+}
+/* Styling für das Zahnrad-Icon */
+#settings-icon {
+    position: absolute;
+    top: 7px; /* 3px * 1.2 = 3.6px */
+    left: 7px; /* 3px * 1.2 = 3.6px */
+    cursor: pointer;
+}
+
+#settings-icon img {
+    width: 22.8px; /* 19px * 1.2 = 22.8px */
+    height: 22.8px; /* 19px * 1.2 = 22.8px */
+    color: rgb(219, 214, 214);
+    transition: transform 0.3s, opacity 0.3s;
+}
+
+#settings-icon:hover img {
+    animation: wobble 0.6s ease-in-out; /* Startet die Wackel-Animation beim Hover */
+    opacity: 0.8; /* Optional: Transparenz beim Hover */
+}
+
+/* Definieren der Wackel-Animation */
+@keyframes wobble {
+    0% { transform: rotate(0deg); }
+    15% { transform: rotate(-5deg); }
+    30% { transform: rotate(5deg); }
+    45% { transform: rotate(-5deg); }
+    60% { transform: rotate(5deg); }
+    75% { transform: rotate(-5deg); }
+    100% { transform: rotate(0deg); }
+}
+
+
+/* Styling für den Toggle-Switch */
+.toggle {
     position: relative;
-    display: inline-block;
-    width: 70px; /* Breiterer Slider */
-    height: 35px; /* Höherer Slider */
+    width: 84px; /* 70px * 1.2 = 84px */
+    height: 42px; /* 35px * 1.2 = 42px */
 }
 
-.option .toggle input {
+.toggle input {
     position: absolute;
     opacity: 0;
     width: 100%;
@@ -92,7 +139,7 @@ button:active {
     z-index: 1;
 }
 
-.option .slider {
+.slider {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -101,35 +148,35 @@ button:active {
     bottom: 0;
     background-color: #ccc;
     transition: 0.4s;
-    border-radius: 35px; /* Rundere Slider-Kanten */
+    border-radius: 42px; /* 35px * 1.2 = 42px */
 }
 
-.option .slider:before {
+.slider:before {
     position: absolute;
     content: "";
-    height: 29px; /* Größerer Kreis */
-    width: 29px; /* Größerer Kreis */
-    left: 3px;
-    bottom: 3px;
+    height: 34.8px; /* 29px * 1.2 = 34.8px */
+    width: 34.8px; /* 29px * 1.2 = 34.8px */
+    left: 3.6px; /* 3px * 1.2 = 3.6px */
+    bottom: 3.6px; /* 3px * 1.2 = 3.6px */
     background-color: white;
     transition: 0.4s;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 14.4px; /* 12px * 1.2 = 14.4px */
     font-weight: bold;
     color: #fff; /* Weißer Text */
 }
 
-.option input:checked + .slider {
+input:checked + .slider {
     background-color: #ccc; /* Slider-Hintergrund bleibt unverändert */
 }
 
-.option input:checked + .slider:before {
+input:checked + .slider:before {
     content: "ON"; /* Weißes Schild-Icon */
     background-color: #d94e4e; /* Kreis wird rot */
-    transform: translateX(5px); /* Kreis verschiebt sich nach rechts */
+    transform: translateX(6px); /* 5px * 1.2 = 6px */
 }
 
 /* Drehende Fragezeichen-Animation */
@@ -144,7 +191,7 @@ button:active {
 
 #loading {
     display: none;
-    font-size: 24px;
+    font-size: 28.8px; /* 24px * 1.2 = 28.8px */
     color: #d94e4e;
     animation: spin 1.5s linear infinite;
 }
@@ -154,18 +201,18 @@ button:active {
 }
 
 /* Responsive Design */
-@media (max-width: 400px) {
+@media (max-width: 480px) { /* Angepasst von 400px auf 480px */
     #popup {
-        width: 90%;
-        padding: 15px;
+        width: 108%; /* 90% * 1.2 = 108% */
+        padding: 18px; /* 15px * 1.2 = 18px */
     }
 
     h1 {
-        font-size: 20px;
+        font-size: 24px; /* 20px * 1.2 = 24px */
     }
 
     button {
-        font-size: 14px;
-        padding: 10px 0;
+        font-size: 16.8px; /* 14px * 1.2 = 16.8px */
+        padding: 12px 0; /* 10px * 1.2 = 12px */
     }
 }

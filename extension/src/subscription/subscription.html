@@ -1,0 +1,59 @@
+<!-- subscription.html -->
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abonnement auswählen - LLM-FaktenChecker</title>
+    <link rel="stylesheet" href="subscription.css">
+</head>
+<body>
+    <div id="subscription-container">
+        <h2>Wählen Sie Ihr Abonnement</h2>
+        <div class="subscription-grid">
+            <!-- Trial Plan -->
+            <div class="subscription-card" data-plan="trial">
+                <div class="subscription-title">Trial</div>
+                <div class="subscription-price">Kostenlos</div>
+                <ul class="subscription-features">
+                    <li>50 Faktenprüfungen</li>
+                    <li>2 Videoprüfungen</li>
+                </ul>
+                <ul class="subscription-featuresdel">
+                    <li>Einstellbare Prüfungsgrundlage</li>
+                    <li>Priorisierte Verarbeitung</li>
+                    <li>Vertiefte Informationssuche</li>
+                </ul>
+            </div>
+            <!-- Basic Plan -->
+            <div class="subscription-card" data-plan="basic">
+                <div class="subscription-title">Basic</div>
+                <div class="subscription-price">€0,99 / Monat</div>
+                <ul class="subscription-features">
+                    <li>300 Faktenprüfungen pro Monat</li>
+                    <li>50 Videoprüfungen pro Monat</li>
+                    <li>Einstellbare Prüfungsgrundlage</li>
+                </ul>
+                <ul class="subscription-featuresdel">
+                    <li>Priorisierte Verarbeitung</li>
+                    <li>Vertiefte Informationssuche</li>
+                </ul>
+            </div>
+            <!-- Pro Plan -->
+            <div class="subscription-card" data-plan="pro">
+                <div class="subscription-title">Pro</div>
+                <div class="subscription-price">€4,99 / Monat</div>
+                <ul class="subscription-features">
+                    <li>Unbegrenzte Faktenprüfungen </li>
+                    <li>Unbegrenzte Videoprüfungen</li>
+                    <li>Einstellbare Prüfungsgrundlage</li>
+                    <li>Priorisierte Verarbeitung</li>
+                    <li>Vertiefte Informationssuche</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script src="subscription.js"></script>
+</body>
+</html>
